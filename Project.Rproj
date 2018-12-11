@@ -59,3 +59,10 @@ summary(ur.df(z,type="none"))
 coin <- lm(y ~ x -1)		#regression without constant
 coin$resid					#obtain the residuals
 summary(ur.df(coin$resid))	#ADF test of residuals
+
+Basic Addistion
+a=1
+b =2
+d =3
+c=a+b+d
+c
