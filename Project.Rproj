@@ -66,3 +66,47 @@ b =2
 d =3
 c=a+b+d
 c
+setwd("~/Desktop/US Internship & Work/BW Research Partnership/Forecasting Model Data/Variable data")
+library(dplyr)
+
+P_ele <- read.csv("Average_retail_price_of_electricity_monthly.csv", header = FALSE) #price in cents per kilowatthour
+Gen_ele <- read.csv("Net_generation_all_sectors_monthly.csv",header = TRUE)
+Gen_utl <- read.csv("Net_generation_all_fuels_(utility-scale)_all_sectors_monthly.csv",header = TRUE)
+Sol_prod <- read.csv("Solar Production.csv",header = TRUE)
+colnames(Sol_prod)[1]<-"Month"
+Inv <- read.csv("MA Investments Data.csv",header = TRUE)
+Med_Inc <- read.csv("Med Income.csv",header = TRUE)
+Fun_Edu <- read.csv("Fed+State Funding.csv",header = TRUE)
+Gov_Inc <- read.csv("Govt Incentives.csv",header = TRUE)
+MA_co2_emi <- read.csv("MA CO2 Emissions.csv",header = TRUE)
+energy_ConExp <- read.csv("Energy Consumption&Expenditures.csv",header = TRUE)
+
+#For Net Generation All Sectors Data
+Year<-as.Date(Gen_ele$Month,"%Y")
+Gen_ele$Year<-Year
+Gen_ele$Year<-format(Year,"%Y")
+Gen_ele_MA<-Gen_ele[c(31,1,18,19,20,21,22,23,24,25,26,27,28,29,30)]
+Gen_ele_MA[is.na(Gen_ele_MA)] <- 0
+Gen_ele_MA_yr<-group_by(Gen_ele_MA, Year)
+Gen_ele_subset<-Gen_ele_MA_yr[c(1,15)]
+Gen_ele_subset["Total Renewables"] <-NA
+Gen_ele_subset$`Total Renewables`<-Gen_ele_MA$Total.MA-Gen_ele_MA$Coal.1-Gen_ele_MA$petroleum.liquids-Gen_ele_MA$natural.gas.1-Gen_ele_MA$nuclear.1
+Gen_ele_MA_yr_total <- aggregate(. ~Year,Gen_ele_subset,sum)
+colnames(Gen_ele_MA_yr_total) <- c("Year","Total MA","Total Renewables")
+
+#For Net Generation All Sectors Data
+
+#For Government Incentives
+colnames(Gov_Inc) <- c("Year","RPS")
+Gov_Inc_RPS <- Gov_Inc[c(1,2)]
+
+#For CO2 Emissions
+colnames(MA_co2_emi) <- c("Year","CO2 emissions")
+
+#For energy con & exp
+colnames(energy_ConExp)[1] <-"Year"
+energy_ConExp_2000 <- energy_ConExp[energy_ConExp$Year>=2000,]
+
+#For Fed Fund for Education Institution
+Fun_Edu_Total <-Fun_Edu[c(1,61)]
+colnames(Fun_Edu_Total) <- c("Year","Fund Total")
